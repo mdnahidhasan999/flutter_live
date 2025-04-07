@@ -34,7 +34,14 @@ class Home extends StatelessWidget {
         //   ),
         // ),
         // child: Icon(Icons.android, size: 84, color: Colors.white),
-        child: Image.network('https://www.w3schools.com/howto/img_avatar.png'),
+        child: Image.network('https://www.w3schools.com/howto/img_avatar.png',
+          width: 200,
+          height: 200,
+          fit: BoxFit.cover,
+          color: Colors.white,
+          colorBlendMode: BlendMode.darken,
+        ),
+
       ),
     );
   }

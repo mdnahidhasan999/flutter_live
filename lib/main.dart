@@ -1,43 +1,7 @@
 import 'package:flutter/material.dart';
 
-// void main() {
-//   runApp(iOSStyleApp());
-// }
-//
-// class iOSStyleApp extends StatelessWidget {
-//   const iOSStyleApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return const CupertinoApp(home: HomePage());
-//   }
-// }
-//
-// class HomePage extends StatelessWidget {
-//   const HomePage({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return CupertinoPageScaffold(
-//       navigationBar: const CupertinoNavigationBar(
-//         middle: Text('Home'),
-//         trailing: Icon(CupertinoIcons.add),
-//       ),
-//       child: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             const CupertinoActivityIndicator(radius: 25),
-//             CupertinoSwitch(value: false, onChanged: (value) {}),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -45,18 +9,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(home: HomeScreen(),
-    theme: ThemeData(
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        )
-      )
-
-    ),);
+    return MaterialApp(
+      routes: {
+        '/': (context) => const HomeScreen(),
+        '/profile': (context) => const ProfileScreen(),
+        '/settings': (context) => const SettingsScreen(),
+      },
+    );
   }
 }
 
@@ -66,18 +25,77 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home Screen')),
+      appBar: AppBar(title: const Text('Home Screen')),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(onPressed: () {}, child: Text('Tap to edit')),
-            TextButton(onPressed: () {}, child: Text('Tap to edit')),
-            TextField(),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/settings');
+              },
+              child: const Text('Settings'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/profile');
+              },
+              child: const Text('Profile'),
+            ),
           ],
         ),
       ),
     );
   }
 }
-//cl-9-p3live23m
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile Screen')),
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/',
+                  (route) => false,
+                );
+              },
+              child: const Text('Back to Home'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/settings');
+              },
+              child: const Text('Settings'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Settings Screen')),
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(onPressed: () {}, child: const Text('Profile')),
+            ElevatedButton(onPressed: () {}, child: const Text('Back to Home')),
+          ],
+        ),
+      ),
+    );
+  }
+}

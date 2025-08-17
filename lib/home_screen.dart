@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,110 +9,151 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _firstNumberController = TextEditingController();
-  final TextEditingController _lastNumberController = TextEditingController();
-  double _result = 0;
+  final TextEditingController _waterIntakeController = TextEditingController(
+    text: '1',
+  );
+  List<WaterConsume> waterConsumeList = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home')),
+      appBar: AppBar(title: Text('Water Tracker')),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: _firstNumberController,
-              decoration: InputDecoration(
-                labelText: 'First Number',
-                hintText: 'Enter your first number',
+            SizedBox(height: 20),
+            _buildWaterConsumeBTN(),
+            SizedBox(height: 20),
+            SizedBox(
+              width: 90,
+              child: TextField(
+                controller: _waterIntakeController,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  labelText: 'Glass Count',
+                  labelStyle: TextStyle(
+                    color: Colors.green,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: BorderSide(color: Colors.amber, width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: BorderSide(color: Colors.green, width: 2),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 8,
+                  ),
+                ),
               ),
-              keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 16), // Add spacing between fields()
-            TextField(
-              controller: _lastNumberController,
-              decoration: InputDecoration(
-                labelText: 'Last Number',
-                hintText: 'Enter your last number',
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 25),
+            SizedBox(height: 24),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ElevatedButton.icon(
-                  onPressed: _addNumbers,
-                  icon: Icon(Icons.add),
-                  label: Text('Add'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: _subNumbers,
-                  icon: Icon(Icons.remove),
-                  label: Text('Sub'),
-                ),
+                Text('History'),
+                Text('Total: ${_getTotalWaterConsume()}'),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: _multiPly,
-                  icon: Icon(Icons.star),
-                  label: Text('Multiply'),
-                ),
-                ElevatedButton.icon(
-                  onPressed: _division,
-                  icon: Icon(Icons.ac_unit_outlined),
-                  label: Text('Division'),
-                ),
-              ],
-            ),
-            SizedBox(height: 25),
-            Text('Result: $_result'),
+            Divider(height: 20),
+            buildWaterListView(),
           ],
         ),
       ),
     );
   }
 
-  void _addNumbers() {
-    final firstNumber = double.tryParse(_firstNumberController.text) ?? 0;
-    final lastNumber = double.tryParse(_lastNumberController.text) ?? 0;
-    setState(() {
-      _result = firstNumber + lastNumber;
-    });
+  GestureDetector _buildWaterConsumeBTN() {
+    return GestureDetector(
+      onTap: _addWaterConsume,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+
+          border: Border.all(color: Colors.amber, width: 8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              Icon(Icons.water_drop_outlined, size: 32),
+              Text(
+                'Add Water Glass',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  void _subNumbers() {
-    final firstNumber = double.tryParse(_firstNumberController.text) ?? 0;
-    final lastNumber = double.tryParse(_lastNumberController.text) ?? 0;
-    setState(() {
-      _result = firstNumber - lastNumber;
-    });
+  Widget buildWaterListView() {
+    return Expanded(
+      child: ListView.builder(
+        primary: false,
+        reverse: true,
+        itemCount: waterConsumeList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _buildSingleListItem(waterConsumeList[index], index + 1);
+        },
+      ),
+    );
   }
 
-  void _multiPly() {
-    final firstNumber = double.tryParse(_firstNumberController.text) ?? 0;
-    final lastNumber = double.tryParse(_lastNumberController.text) ?? 0;
-    setState(() {
-      _result = firstNumber * lastNumber;
-    });
+  Widget _buildSingleListItem(WaterConsume waterConsume, int selectedIndex) {
+    return ListTile(
+      title: Text(DateFormat.yMEd().add_jms().format(waterConsume.time)),
+      leading: CircleAvatar(
+        backgroundColor: Colors.amber,
+        child: Text('$selectedIndex'),
+      ),
+      trailing: Text(
+        'Water Glass: ${waterConsume.glassCount}',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+          color: Colors.green,
+        ),
+      ),
+    );
   }
 
-  void _division() {
-    final firstNumber = double.tryParse(_firstNumberController.text) ?? 0;
-    final lastNumber = double.tryParse(_lastNumberController.text) ?? 0;
-    setState(() {
-      _result = firstNumber / lastNumber;
-    });
+  void _addWaterConsume() {
+    int glassCount = int.tryParse(_waterIntakeController.text) ?? 1;
+    WaterConsume waterConsume = WaterConsume(
+      time: DateTime.now(),
+      glassCount: glassCount,
+    );
+    waterConsumeList.add(waterConsume);
+    setState(() {});
   }
 
-  @override
-  void dispose() {
-    _firstNumberController.dispose();
-    _lastNumberController.dispose();
-    super.dispose();
+  int _getTotalWaterConsume() {
+    int totalCount = 0;
+    for (WaterConsume consume in waterConsumeList) {
+      totalCount += consume.glassCount;
+    }
+    return totalCount;
   }
 }
+
+class WaterConsume {
+  final DateTime time;
+  final int glassCount;
+
+  WaterConsume({required this.time, required this.glassCount});
+}
+
+//113

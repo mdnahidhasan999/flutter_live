@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class addProductScreen extends StatefulWidget {
   const addProductScreen({super.key});
@@ -13,7 +16,10 @@ class _addProductScreenState extends State<addProductScreen> {
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _totalPriceController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
+
   final _globalKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +38,20 @@ class _addProductScreenState extends State<addProductScreen> {
                   decoration: InputDecoration(
                     labelText: 'Product Name',
                     hintText: 'Enter product name',
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter product name';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _codeController,
+                  decoration: InputDecoration(
+                    labelText: 'Product Code',
+                    hintText: 'Enter product Code',
                   ),
                   validator: (String? value) {
                     if (value == null || value.trim().isEmpty) {
@@ -101,11 +121,19 @@ class _addProductScreenState extends State<addProductScreen> {
                   },
                 ),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_globalKey.currentState!.validate()) {}
-                  },
-                  child: Text('Save Product'),
+
+                Visibility(
+                  visible: _isLoading == false,
+                  replacement: Center(child: CircularProgressIndicator()),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_globalKey.currentState!.validate()) {
+                        await _addProduct();
+                        Navigator.pop(context, true);
+                      }
+                    },
+                    child: Text('Save Product'),
+                  ),
                 ),
               ],
             ),
@@ -115,6 +143,49 @@ class _addProductScreenState extends State<addProductScreen> {
     );
   }
 
+  Future<void> _addProduct() async {
+    _isLoading = true;
+    setState(() {});
+
+    String Url = 'https://crud.teamrabbil.com/api/v1/CreateProduct';
+    Map<String, dynamic> inputData = {
+      "Img": _imageUrlController.text.trim(),
+      "ProductCode": _codeController.text.trim(),
+      "ProductName": _nameController.text.trim(),
+      "Qty": _quantityController.text.trim(),
+      "TotalPrice": _totalPriceController.text.trim(),
+      "UnitPrice": _unitPriceController.text.trim(),
+    };
+    Uri uri = Uri.parse(Url);
+    Response response = await post(
+      uri,
+      body: jsonEncode(inputData),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      _nameController.clear();
+      _unitPriceController.clear();
+      _quantityController.clear();
+      _totalPriceController.clear();
+      _imageUrlController.clear();
+      _codeController.clear();
+
+      final snackBar = SnackBar(
+        content: Text('Product added successfully!'),
+        backgroundColor: Colors.green,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      final snackBar = SnackBar(
+        content: Text('Failed to add product. Please try again.'),
+        backgroundColor: Colors.red,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    _isLoading = false;
+    setState(() {});
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -122,6 +193,9 @@ class _addProductScreenState extends State<addProductScreen> {
     _quantityController.dispose();
     _totalPriceController.dispose();
     _imageUrlController.dispose();
-     super.dispose();
+    _codeController.dispose();
+    super.dispose();
   }
 }
+
+//101

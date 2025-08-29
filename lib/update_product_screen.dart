@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+
+import 'ProductListScreen.dart';
 
 class updateProductScreen extends StatefulWidget {
-  const updateProductScreen({super.key});
+  const updateProductScreen({super.key, required this.product});
+
+  final Product product;
 
   @override
   State<updateProductScreen> createState() => _updateProductScreenState();
@@ -13,7 +20,20 @@ class _updateProductScreenState extends State<updateProductScreen> {
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _totalPriceController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
+  final TextEditingController _codeController = TextEditingController();
   final _globalKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.product.ProductName;
+    _codeController.text = widget.product.ProductCode;
+    _imageUrlController.text = widget.product.Img;
+    _unitPriceController.text = widget.product.UnitPrice.toString();
+    _quantityController.text = widget.product.Qty.toString();
+    _totalPriceController.text = widget.product.TotalPrice.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +52,20 @@ class _updateProductScreenState extends State<updateProductScreen> {
                   decoration: InputDecoration(
                     labelText: 'Product Name',
                     hintText: 'Enter product name',
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter product name';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                TextFormField(
+                  controller: _codeController,
+                  decoration: InputDecoration(
+                    labelText: 'Product Code',
+                    hintText: 'Enter product Code',
                   ),
                   validator: (String? value) {
                     if (value == null || value.trim().isEmpty) {
@@ -101,11 +135,18 @@ class _updateProductScreenState extends State<updateProductScreen> {
                   },
                 ),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_globalKey.currentState!.validate()) {}
-                  },
-                  child: Text('Update Product'),
+                Visibility(
+                  visible: _isLoading == false,
+                  replacement: Center(child: CircularProgressIndicator()),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_globalKey.currentState!.validate()) {
+                        await _updateProduct();
+                        Navigator.pop(context, true);
+                      }
+                    },
+                    child: Text('Update Product'),
+                  ),
                 ),
               ],
             ),
@@ -115,6 +156,42 @@ class _updateProductScreenState extends State<updateProductScreen> {
     );
   }
 
+  Future<void> _updateProduct() async {
+    _isLoading = true;
+    setState(() {});
+    Map<String, dynamic> inputData = {
+      "Img": _imageUrlController.text.trim(),
+      "ProductCode": _codeController.text.trim(),
+      "ProductName": _nameController.text.trim(),
+      "Qty": _quantityController.text.trim(),
+      "TotalPrice": _totalPriceController.text.trim(),
+      "UnitPrice": _unitPriceController.text.trim(),
+    };
+    String Url =
+        'https://crud.teamrabbil.com/api/v1/UpdateProduct/${widget.product.id}';
+    Uri uri = Uri.parse(Url);
+    Response response = await post(
+      uri,
+      body: jsonEncode(inputData),
+      headers: {'content-type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      final snackBar = SnackBar(
+        content: Text('Product updated successfully!'),
+        backgroundColor: Colors.green,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      final snackBar = SnackBar(
+        content: Text('Failed to update product. Please try again.'),
+        backgroundColor: Colors.red,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+    _isLoading = false;
+    setState(() {});
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -122,6 +199,8 @@ class _updateProductScreenState extends State<updateProductScreen> {
     _quantityController.dispose();
     _totalPriceController.dispose();
     _imageUrlController.dispose();
+    _codeController.dispose();
     super.dispose();
   }
 }
+//28

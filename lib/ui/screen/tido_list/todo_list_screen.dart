@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_live/entities/todo.dart';
+import 'package:flutter_live/ui/screen/tido_list/done_todo_list.dart';
+import 'package:flutter_live/ui/screen/tido_list/undone_todo_list.dart';
 
 import '../../widget/todo_item.dart';
 import '../add_new_todoList.dart';
@@ -25,23 +27,27 @@ class _TodoListScreenState extends State<TodoListScreen> {
           ),
         ),
         body: TabBarView(
-          children: [AllTodoListTab(), AllTodoListTab(), AllTodoListTab()],
+          children: [AllTodoListTab(), DoneTodoListTab(), UndDoneTodoListTab()],
         ),
 
-        floatingActionButton: FloatingActionButton.extended(
-          tooltip: 'Add To-Do',
-          backgroundColor: Colors.greenAccent,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AddNewTodolist()),
-            );
-          },
-          label: const Text('Add'),
-
-          icon: const Icon(Icons.add),
-        ),
+        floatingActionButton: _buildAddTodoFloatingBtn(),
       ),
+    );
+  }
+
+  FloatingActionButton _buildAddTodoFloatingBtn() {
+    return FloatingActionButton.extended(
+      tooltip: 'Add To-Do',
+      backgroundColor: Colors.greenAccent,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AddNewTodolist()),
+        );
+      },
+      label: const Text('Add'),
+
+      icon: const Icon(Icons.add),
     );
   }
 }

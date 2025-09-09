@@ -40,7 +40,7 @@ class ToDoItem extends StatelessWidget {
     return GestureDetector(
       onTap: onIconButtonPressed,
 
-      child: CircleAvatar(child: Icon(_getIcon(true))),
+      child: CircleAvatar(child: Icon(_getIcon(!todo.done))),
     );
   }
 

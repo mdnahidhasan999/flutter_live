@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../entities/todo.dart';
+
 class AddNewTodolist extends StatefulWidget {
-  const AddNewTodolist({super.key});
+  const AddNewTodolist({super.key, required this.onAddTodo});
+
+  final Function(Todo) onAddTodo;
 
   @override
   State<AddNewTodolist> createState() => _AddNewTodolistState();
@@ -28,9 +32,7 @@ class _AddNewTodolistState extends State<AddNewTodolist> {
                 decoration: const InputDecoration(
                   hintText: 'Title',
                   labelText: 'Title',
-                  border: OutlineInputBorder(
-
-                  ),
+                  border: OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.green, width: 2.0),
                   ),
@@ -70,6 +72,12 @@ class _AddNewTodolistState extends State<AddNewTodolist> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    Todo todo = Todo(
+                      _titleController.text,
+                      _descriptionController.text,
+                      DateTime.now(),
+                    );
+                    widget.onAddTodo(todo);
                     Navigator.pop(context);
                   }
                 },

@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import '../utility/app_colors.dart';
-import '../widgets/background_widget.dart';
+import '../../utility/app_colors.dart';
+import '../../widgets/background_widget.dart';
 import 'reset_password_screen.dart';
 import 'sign_in_screen.dart';
 

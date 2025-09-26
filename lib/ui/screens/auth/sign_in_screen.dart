@@ -1,10 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_live/ui/screens/email_verification_screen.dart';
-import 'package:flutter_live/ui/screens/sign_up_screen.dart';
+import 'package:flutter_live/ui/screens/auth/email_verification_screen.dart';
+import 'package:flutter_live/ui/screens/auth/sign_up_screen.dart';
 
-import '../utility/app_colors.dart';
-import '../widgets/background_widget.dart';
+import '../../utility/app_colors.dart';
+import '../../widgets/background_widget.dart';
+
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});

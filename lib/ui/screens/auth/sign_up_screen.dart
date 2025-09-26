@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../utility/app_colors.dart';
-import '../widgets/background_widget.dart';
+import '../../utility/app_colors.dart';
+import '../../widgets/background_widget.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

@@ -5,7 +5,7 @@ import 'package:flutter_live/ui/screens/auth/sign_up_screen.dart';
 
 import '../../utility/app_colors.dart';
 import '../../widgets/background_widget.dart';
-
+import '../main_bottom_nav_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -49,7 +49,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _onTapNextBtn();
+                    },
                     child: Icon(Icons.arrow_circle_right_outlined, size: 22),
                   ),
 
@@ -95,6 +97,14 @@ class _SignInScreenState extends State<SignInScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _onTapNextBtn() {
+    // Handle sign in logic here
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => MainBottomNavScreen()),
     );
   }
 

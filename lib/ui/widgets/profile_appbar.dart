@@ -7,14 +7,25 @@ import 'network_cached_image.dart';
 AppBar profileAppBar(context, [bool fromUpdateProfile = false]) {
   return AppBar(
     backgroundColor: AppColors.themeColor,
-    leading: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: CircleAvatar(
-        radius: 20,
-        backgroundColor: Colors.white,
+    leading: GestureDetector(
+      onTap: () {
+        if (fromUpdateProfile) {
+          return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UpdateProfileScreen()),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: CircleAvatar(
+          radius: 20,
+          backgroundColor: Colors.white,
 
-        child: NetworkCachedImage(
-          imageUrl: 'https://www.w3schools.com/howto/img_avatar.png',
+          child: NetworkCachedImage(
+            imageUrl: 'https://www.w3schools.com/howto/img_avatar.png',
+          ),
         ),
       ),
     ),

@@ -16,7 +16,7 @@ class _InProgressTaskScreenState extends State<InProgressTaskScreen> {
       body: ListView.builder(
         itemCount: 20,
         itemBuilder: (context, index) {
-          return TaskItem();
+         // return TaskItem();
         },
       ),
     );

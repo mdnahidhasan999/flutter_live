@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live/data/models/network-response.dart';
+import 'package:flutter_live/data/models/task_list_wrapper_model.dart';
+import 'package:flutter_live/data/models/task_model.dart';
+import 'package:flutter_live/data/network_caller/network_caller.dart';
+import 'package:flutter_live/data/utilities/urls.dart';
 import 'package:flutter_live/ui/utility/app_colors.dart';
+import 'package:flutter_live/ui/widgets/center_progress_indicator.dart';
+import 'package:flutter_live/ui/widgets/snackbar_message.dart';
 
 import '../widgets/task_item.dart';
 import '../widgets/task_summary_card.dart';
@@ -13,6 +20,15 @@ class NewTaskScreen extends StatefulWidget {
 }
 
 class _NewTaskScreenState extends State<NewTaskScreen> {
+  bool isLoading = false;
+  List<TaskModel> newTaskList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _getNewTasks();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -24,11 +40,20 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
               _buildSummarySection(),
               SizedBox(height: 10),
               Expanded(
-                child: ListView.builder(
-                  itemCount: 20,
-                  itemBuilder: (context, index) {
-                    return TaskItem();
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await _getNewTasks();
                   },
+                  child: Visibility(
+                    visible: isLoading == false,
+                    replacement: CenterProgressIndicator(),
+                    child: ListView.builder(
+                      itemCount: newTaskList.length,
+                      itemBuilder: (context, index) {
+                        return TaskItem(taskModel: newTaskList[index]);
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -63,6 +88,31 @@ class _NewTaskScreenState extends State<NewTaskScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _getNewTasks() async {
+    isLoading = true;
+    if (mounted) {
+      setState(() {});
+    }
+    NetworkResponse response = await NetworkCaller.getRequest(Urls.newTask);
+    if (response.isSuccess) {
+      TaskListModel taskListModel = TaskListModel.fromJson(
+        response.responseData,
+      );
+      newTaskList = taskListModel.taskList ?? [];
+    } else {
+      if (mounted) {
+        showSnackBarMessage(
+          context,
+          response.errorMessage ?? 'Getting new tasks failed! Please try again',
+        );
+      }
+    }
+    isLoading = false;
+    if (mounted) {
+      setState(() {});
+    }
   }
 }
 

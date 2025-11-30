@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live/data/models/task_model.dart';
 
 class TaskItem extends StatelessWidget {
-  const TaskItem({super.key});
+  const TaskItem({super.key, required this.taskModel});
+
+  final TaskModel taskModel;
 
   @override
   Widget build(BuildContext context) {
@@ -9,13 +12,13 @@ class TaskItem extends StatelessWidget {
       elevation: 0,
       color: Colors.white,
       child: ListTile(
-        title: Text('Task Title'),
+        title: Text(taskModel.title ?? ''),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('This is a description of task Description'),
+            Text(taskModel.description ?? ''),
             Text(
-              'Due Date: 2024-12-31',
+              'Due Date: ${taskModel.createdDate}',
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.black,
@@ -26,7 +29,7 @@ class TaskItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Chip(
-                  label: Text('New'),
+                  label: Text(taskModel.status ?? 'New'),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16.0),
                   ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_live/ui/controllers/auth_controller.dart';
 
+import '../screens/auth/sign_in_screen.dart';
 import '../screens/update_profile_screen.dart';
 import '../utility/app_colors.dart';
 import 'network_cached_image.dart';
@@ -44,7 +46,7 @@ AppBar profileAppBar(context, [bool fromUpdateProfile = false]) {
 
         children: [
           Text(
-            'John Doe',
+            AuthController.userData?.fullName ?? '',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -52,7 +54,7 @@ AppBar profileAppBar(context, [bool fromUpdateProfile = false]) {
             ),
           ),
           Text(
-            'mdnahid@gmail.com',
+            AuthController.userData?.email ?? '',
             style: TextStyle(fontSize: 12, color: Colors.white70),
           ),
         ],
@@ -60,7 +62,14 @@ AppBar profileAppBar(context, [bool fromUpdateProfile = false]) {
     ),
     actions: [
       IconButton(
-        onPressed: () {},
+        onPressed: () {
+          AuthController.clearAuthData();
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => SignInScreen()),
+            (route) => false,
+          );
+        },
         icon: Icon(Icons.logout, color: Colors.white),
       ),
     ],

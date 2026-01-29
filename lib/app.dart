@@ -3,12 +3,23 @@ import 'package:flutter/material.dart';
 import 'ui/screens/auth/splash_screen.dart';
 import 'ui/utility/app_colors.dart';
 
-class TaskManagerApp extends StatelessWidget {
+class TaskManagerApp extends StatefulWidget {
   const TaskManagerApp({super.key});
 
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  State<TaskManagerApp> createState() => _TaskManagerAppState();
+}
+
+class _TaskManagerAppState extends State<TaskManagerApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SplashScreen(), theme: LightThemeData());
+    return MaterialApp(
+      navigatorKey: TaskManagerApp.navigatorKey,
+      home: SplashScreen(),
+      theme: LightThemeData(),
+    );
   }
 
   ThemeData LightThemeData() {
@@ -26,17 +37,17 @@ class TaskManagerApp extends StatelessWidget {
           borderSide: BorderSide(color: AppColors.themeColor),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        
       ),
       textTheme: TextTheme(
         titleLarge: TextStyle(
           fontSize: 32.0,
           fontWeight: FontWeight.bold,
           color: Colors.black,
-        ), titleSmall: TextStyle(
+        ),
+        titleSmall: TextStyle(
           fontSize: 12.0,
           fontWeight: FontWeight.w400,
-        letterSpacing: 0.4,
+          letterSpacing: 0.4,
           color: Colors.black.withOpacity(0.6),
         ),
       ),
@@ -52,12 +63,8 @@ class TaskManagerApp extends StatelessWidget {
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: Colors.grey,
-
-
-        ),
-      )
+        style: TextButton.styleFrom(foregroundColor: Colors.grey),
+      ),
     );
   }
 }

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_live/data/models/network-response.dart';
 import 'package:http/http.dart';
 
+import '../../app.dart';
 import '../../ui/controllers/auth_controller.dart';
+import '../../ui/screens/auth/sign_in_screen.dart';
 
 class NetworkCaller {
   static Future<NetworkResponse> getRequest(String url) async {
@@ -23,6 +25,7 @@ class NetworkCaller {
           responseData: decodedData,
         );
       } else if (res.statusCode == 401) {
+        redirectToLogin();
         return NetworkResponse(
           statusCode: res.statusCode,
           isSuccess: false,
@@ -65,6 +68,13 @@ class NetworkCaller {
           isSuccess: true,
           responseData: decodedData,
         );
+      } else if (res.statusCode == 401) {
+        redirectToLogin();
+        return NetworkResponse(
+          statusCode: res.statusCode,
+          isSuccess: false,
+          responseData: null,
+        );
       } else {
         return NetworkResponse(
           statusCode: res.statusCode,
@@ -81,7 +91,14 @@ class NetworkCaller {
     }
   }
 
-  void redirectToLogin() {}
+  static Future<void> redirectToLogin() async {
+    await AuthController.clearAuthData();
+    Navigator.pushAndRemoveUntil(
+      TaskManagerApp.navigatorKey.currentContext!,
+      MaterialPageRoute(builder: (context) => SignInScreen()),
+      (route) => false,
+    );
+  }
 }
 
 //23
